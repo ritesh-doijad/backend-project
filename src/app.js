@@ -20,9 +20,6 @@ import userRouter from "./routes/user.routes.js"
 // routes declartion
 app.use("/api/v1/users",userRouter)
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
 
 //http://localhost:3000/api/v1/users/register
 export {app}

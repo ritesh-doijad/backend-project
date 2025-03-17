@@ -1,1 +1,1 @@
-export const DB_NAME="my-first-mongoDB-project"
+export const DB_NAME="myfirstmongoDBproject"
