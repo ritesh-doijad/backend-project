@@ -97,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(200, createdUser, "user created successfully"));
+    .json(new ApiResponse(200,"user created successfully",createdUser));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -230,10 +230,14 @@ const changeCurrentUserPassword = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.user?._id);
 
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "Both old and new passwords are required");
+  }
+  
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
-    throw new ApiError(401, "Invalid old password");
+    throw new ApiError(401, "Invalid old password"); 
   }
 
   user.password = newPassword;
@@ -247,7 +251,7 @@ const changeCurrentUserPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "Curremt User Fetch SuccessFully"));
+    .json(new ApiResponse(200, "Curremt User Fetch SuccessFully",req.user));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -258,7 +262,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findByIdAndUpdate(
-    res.user?._id,
+    req.user?._id,
     {
       $set: {
         fullName,
@@ -278,6 +282,11 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;
 
+  if (!req.user?._id) {
+    throw new ApiError(401, "user not found");
+  }
+
+
   if (!avatarLocalPath) {
     throw new ApiError(401, "Avtar file is missing");
   }
@@ -287,7 +296,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   if (!avatar.url) {
     throw new ApiError(401, "Error while uploding avatar");
   }
-
+  
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -305,6 +314,11 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path;
+
+  if (!req.user?._id) {
+    throw new ApiError(401, "user not found");
+  }
+
 
   if (!coverImageLocalPath) {
     throw new ApiError(401, "Cover Image file is missing");

@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import {upload} from "../middlewarse/multer.middleware.js"
-import { loginUser, logoutUser, refreshAccessToken, registerUser } from "../controllers/user.controller.js";
+import { changeCurrentUserPassword, getCurrentUser, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewarse/auth.middleware.js";
 
 const router=Router()
@@ -26,6 +26,12 @@ router.route("/login").post(loginUser)
 
 router.route("/logout").post(verifyJWT,logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)
+router.route("/change-password").post(verifyJWT,changeCurrentUserPassword)
+router.route("/get-user").get(verifyJWT,getCurrentUser)
+router.route("/update-account").post(verifyJWT,updateAccountDetails)
+router.route("/update-avatar").post(verifyJWT,upload.single("avatar"),updateUserAvatar)
+router.route("/update-coverimage").post(verifyJWT,upload.single("coverImage"),updateUserCoverImage)
+
 
 
 export default router
